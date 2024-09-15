@@ -22,9 +22,6 @@ public class FilmsEndpointTest {
     public void findTheFilmWithLatestReleaseDate() {
         List<Film> filmList = RestApiHelper.getFilms();
         List<Date> releaseDates = filmList.stream().map(s -> s.releaseDate()).collect(Collectors.toList());
-
-//        List<LocalDate> localDates = releaseDates.stream().map(date ->
-//                LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(date))).collect(Collectors.toList());
         Date latestReleaseDate = releaseDates.stream()
                 .sorted(Collections.reverseOrder())
                 .collect(Collectors.toList()).get(0);
@@ -64,7 +61,7 @@ public class FilmsEndpointTest {
     @Test(priority = 3)
     public void findTheTallestCharacterForAllFilms() {
         Page<Character> pageWithCharacters = getCharacters("1");
-        List<Character> fullListOfCharacters = new ArrayList<>();
+        List<Character> fullListOfCharacters = new ArrayList<Character>();
         while (pageWithCharacters.next() != null) {
             fullListOfCharacters.addAll(pageWithCharacters.results());
             pageWithCharacters = getCharacters(pageWithCharacters.next().split("=")[1]);

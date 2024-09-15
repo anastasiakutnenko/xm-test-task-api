@@ -56,5 +56,10 @@
       <version>${jackson.version}</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>json-schema-validator</artifactId>
+      <version>${restassured.version}</version>
+    </dependency>
   </dependencies>
 </project>

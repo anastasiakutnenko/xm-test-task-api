@@ -1,5 +1,7 @@
 package org.xm.helpers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
@@ -57,7 +59,7 @@ public class RestApiHelper {
     }
 
     public static Page getCharacters(String pageNumber) {
-        Page page = new Page();
+        Page<Character> page = new Page();
         Response response = given()
                 .contentType("application/json")
                 //.spec(requestSpec)
@@ -65,7 +67,7 @@ public class RestApiHelper {
                 .queryParams("page", pageNumber)
                 .get("https://swapi.dev/api/people");
         if (response.getStatusCode() == 200) {
-            page = parseResponseToObject(response, Page.class);
+            page = parseResponseToPage(response, new TypeReference<>() {});
         }
         return page;
     }
@@ -83,5 +85,13 @@ public class RestApiHelper {
                 .then()
                 .extract()
                 .as(classType);
+    }
+    public static <T> T parseResponseToPage(Response response, TypeReference<T> typeReference) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(response.asString(), typeReference);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse response", e);
+        }
     }
 }
