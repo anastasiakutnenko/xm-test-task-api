@@ -15,5 +15,5 @@ public class Page <T> {
     @JsonProperty
     private String previous;
     @JsonProperty
-    private List<Character> results;
+    private List<T> results;
 }
