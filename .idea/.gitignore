@@ -1,9 +1,0 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-# Intellij IDE files
-/.idea/
-/.iml/
-
-# Build output
-/target/
