@@ -8,6 +8,7 @@ import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.xm.models.Character;
 import org.xm.models.Film;
+import org.xm.models.Page;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,21 @@ public class RestApiHelper {
         }
         return character;
     }
+
+    public static Page getCharacters(String pageNumber) {
+        Page page = new Page();
+        Response response = given()
+                .contentType("application/json")
+                //.spec(requestSpec)
+                .when()
+                .queryParams("page", pageNumber)
+                .get("https://swapi.dev/api/people");
+        if (response.getStatusCode() == 200) {
+            page = parseResponseToObject(response, Page.class);
+        }
+        return page;
+    }
+
     public static <T> List<T> parseResponseToList(Response response, Class<T> classType) {
         return response
                 .then()
