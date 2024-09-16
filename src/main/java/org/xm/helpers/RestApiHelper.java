@@ -45,7 +45,11 @@ public class RestApiHelper {
         Response response = given()
                 .spec(requestSpec)
                 .when()
-                .get("films/");
+                .get("films/")
+                .then()
+                .spec(responseSpec)
+                .extract()
+                .response();
         if (response.getStatusCode() == 200) {
             films = parseResponseToList(response, Film.class);
         }
@@ -53,28 +57,29 @@ public class RestApiHelper {
     }
 
     public static Character getCharacter(String characterId) {
-        Character character = new Character();
         Response response = given()
                 .spec(requestSpec)
                 .when()
-                .get("people/" + characterId);
-        if (response.getStatusCode() == 200) {
-            character = parseResponseToObject(response, Character.class);
-        }
-        return character;
+                .get("people/" + characterId)
+                .then()
+                .spec(responseSpec)
+                .extract()
+                .response();
+
+        return parseResponseToObject(response, Character.class);
     }
 
     public static Page getCharacters(String pageNumber) {
-        Page<Character> page = new Page();
         Response response = given()
                 .spec(requestSpec)
                 .when()
                 .queryParams("page", pageNumber)
-                .get("people");
-        if (response.getStatusCode() == 200) {
-            page = parseResponseToPage(response, new TypeReference<>() {
-            });
-        }
+                .get("people")
+                .then()
+                .spec(responseSpec)
+                .extract()
+                .response();
+        Page<Character> page = parseResponseToPage(response, new TypeReference<>() {});
         return page;
     }
 
