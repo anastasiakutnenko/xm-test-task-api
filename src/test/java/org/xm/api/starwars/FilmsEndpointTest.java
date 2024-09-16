@@ -6,10 +6,7 @@ import org.xm.models.Character;
 import org.xm.models.Film;
 import org.xm.models.Page;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.xm.helpers.RestApiHelper.getCharacter;
@@ -21,16 +18,11 @@ public class FilmsEndpointTest {
     @Test(priority = 1)
     public void findTheFilmWithLatestReleaseDate() {
         List<Film> filmList = RestApiHelper.getFilms();
-        List<Date> releaseDates = filmList.stream().map(s -> s.releaseDate()).collect(Collectors.toList());
-        Date latestReleaseDate = releaseDates.stream()
-                .sorted(Collections.reverseOrder())
-                .collect(Collectors.toList()).get(0);
-
-        this.latestReleaseDateFilm = filmList
-                .stream()
-                .filter(film -> film.releaseDate().equals(latestReleaseDate))
-                .findFirst()
-                .orElse(null);
+        this.latestReleaseDateFilm =
+                filmList.stream()
+                        .max(Comparator.comparing(Film::releaseDate))
+                        .stream().collect(Collectors.toList())
+                        .get(0);
 
         System.out.println("Film with latest release date is "
                 + latestReleaseDateFilm.title() + "and it's release date is "
