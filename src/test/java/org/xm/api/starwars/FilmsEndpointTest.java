@@ -62,7 +62,7 @@ public class FilmsEndpointTest {
         }
         fullListOfCharacters
                 .addAll(maximumHeightCharactersInTheList(pageWithCharacters.
-                        results())); // adds results from the last page
+                        results()));
 
         Character theTallestCharacter = maximumHeightCharactersInTheList(fullListOfCharacters)
                 .get(0);
