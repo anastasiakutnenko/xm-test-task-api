@@ -20,10 +20,17 @@ import static io.restassured.RestAssured.given;
 public class RestApiHelper {
     static RequestSpecification requestSpec;
     static ResponseSpecification responseSpec;
+
+    static {
+        createRequestSpecification();
+        createResponseSpecification();
+    }
+
     public static void createRequestSpecification() {
-        requestSpec = new RequestSpecBuilder().
-                setBaseUri("https://swapi.dev/api/").
-                build();
+        requestSpec = new RequestSpecBuilder()
+                .setBaseUri("https://swapi.dev/api/")
+                .setContentType(ContentType.JSON)
+                .build();
     }
 
     public static void createResponseSpecification() {
@@ -32,13 +39,13 @@ public class RestApiHelper {
                 expectContentType(ContentType.JSON).
                 build();
     }
+
     public static List<Film> getFilms() {
         List<Film> films = new ArrayList<>();
-                Response response = given()
-                        .contentType("application/json")
-                //.spec(requestSpec)
+        Response response = given()
+                .spec(requestSpec)
                 .when()
-                .get("https://swapi.dev/api/films");
+                .get("films/");
         if (response.getStatusCode() == 200) {
             films = parseResponseToList(response, Film.class);
         }
@@ -48,12 +55,11 @@ public class RestApiHelper {
     public static Character getCharacter(String characterId) {
         Character character = new Character();
         Response response = given()
-                .contentType("application/json")
-                //.spec(requestSpec)
+                .spec(requestSpec)
                 .when()
-                .get("https://swapi.dev/api/people/" + characterId);
+                .get("people/" + characterId);
         if (response.getStatusCode() == 200) {
-             character = parseResponseToObject(response, Character.class);
+            character = parseResponseToObject(response, Character.class);
         }
         return character;
     }
@@ -61,13 +67,13 @@ public class RestApiHelper {
     public static Page getCharacters(String pageNumber) {
         Page<Character> page = new Page();
         Response response = given()
-                .contentType("application/json")
-                //.spec(requestSpec)
+                .spec(requestSpec)
                 .when()
                 .queryParams("page", pageNumber)
-                .get("https://swapi.dev/api/people");
+                .get("people");
         if (response.getStatusCode() == 200) {
-            page = parseResponseToPage(response, new TypeReference<>() {});
+            page = parseResponseToPage(response, new TypeReference<>() {
+            });
         }
         return page;
     }
@@ -86,6 +92,7 @@ public class RestApiHelper {
                 .extract()
                 .as(classType);
     }
+
     public static <T> T parseResponseToPage(Response response, TypeReference<T> typeReference) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
