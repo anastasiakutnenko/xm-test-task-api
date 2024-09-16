@@ -53,28 +53,28 @@ public class FilmsEndpointTest {
     @Test(priority = 3)
     public void findTheTallestCharacterForAllFilms() {
         Page<Character> pageWithCharacters = getCharacters("1");
-        List<Character> fullListOfCharacters = new ArrayList<Character>();
+        List<Character> fullListOfCharacters = new ArrayList<>();
+        List<Character> charactersWithMaximumHeightOnThePage;
         while (pageWithCharacters.next() != null) {
-            fullListOfCharacters.addAll(pageWithCharacters.results());
+            charactersWithMaximumHeightOnThePage = maximumHeightCharactersInTheList(pageWithCharacters.results());
+            fullListOfCharacters.addAll(charactersWithMaximumHeightOnThePage);
             pageWithCharacters = getCharacters(pageWithCharacters.next().split("=")[1]);
         }
-        fullListOfCharacters.addAll(pageWithCharacters.results()); // adds results from the last page
+        fullListOfCharacters
+                .addAll(maximumHeightCharactersInTheList(pageWithCharacters.
+                        results())); // adds results from the last page
 
-        Integer theTallestCharacterHeight = fullListOfCharacters
-                .stream()
-                .filter(character -> !character.height().equals("unknown"))
-                .map(character -> Integer.valueOf(character.height()))
-                .sorted(Collections.reverseOrder())
-                .findFirst()
-                .orElse(null);
-
-        Character theTallestCharacter = fullListOfCharacters
-                .stream()
-                .filter(character -> character.height().equals((theTallestCharacterHeight).toString()))
-                .findFirst()
-                .orElse(null);
+        Character theTallestCharacter = maximumHeightCharactersInTheList(fullListOfCharacters)
+                .get(0);
 
         System.out.println("The tallest person ever played in any Star Wars film is "
                 + theTallestCharacter.name() + "and them height is " + theTallestCharacter.height());
+    }
+
+    private static List<Character> maximumHeightCharactersInTheList(List<Character> listOfCharacters) {
+        return listOfCharacters.stream()
+                .filter(character -> !character.height().equals("unknown"))
+                .max(Comparator.comparing(character -> Integer.valueOf(character.height())))
+                .stream().collect(Collectors.toList());
     }
 }
